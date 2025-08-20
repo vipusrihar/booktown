@@ -1,5 +1,9 @@
 package com.vipusa.booktown.service;
 
+import com.vipusa.booktown.exception.BookAlreadyExistsException;
+import com.vipusa.booktown.exception.ResourceNotFoundException;
+import com.vipusa.booktown.model.DTO.CreateBookRequest;
+import com.vipusa.booktown.model.DTO.UpdateBookRequest;
 import com.vipusa.booktown.model.entity.Book;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +15,11 @@ public interface BookService {
 
     boolean deleteBook(Integer bookId);
 
-    Book updateBook(Integer bookId, Book book);
+    Book updateBook(Integer bookId, UpdateBookRequest request);
 
-    Book getBookById(Integer bookId);
+    Book findBookById(Integer bookId);
 
-    List<Book> getAllBooks();
+    List<Book> findAllBooks();
 
-    Book createBook(Book book);
+    Book createBook(CreateBookRequest request);
 }

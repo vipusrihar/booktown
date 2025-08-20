@@ -6,6 +6,7 @@ import com.vipusa.booktown.config.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -62,7 +63,17 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/v1/auth/login").permitAll()
+                        auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
+                                // Public GET endpoints
+                                .requestMatchers(HttpMethod.GET,"/api/v1/book/all", "/api/v1/book/*").permitAll()
+                                // Authenticated POST endpoint
+                                .requestMatchers(HttpMethod.POST, "/api/v1/book/create").hasRole("ADMIN")
+                                // Authenticated PUT endpoint
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/book/*").hasRole("ADMIN")
+                                // Authenticated DELETE endpoint
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/book/*").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/auth/me","/api/v1/book/create").authenticated()
+//                                .requestMatchers("/api/v1/user/**").hasAnyRole("ADMIN","USER") // Only exact /api/v1
                                 .anyRequest().authenticated()
                 );
 
@@ -78,8 +89,6 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("*"));
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
