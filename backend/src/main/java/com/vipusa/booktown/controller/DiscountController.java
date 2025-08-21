@@ -1,12 +1,16 @@
 package com.vipusa.booktown.controller;
 
+import com.vipusa.booktown.model.DTO.CreateDiscountRequest;
+import com.vipusa.booktown.model.DTO.UpdateDiscountRequest;
 import com.vipusa.booktown.model.entity.Discount;
-import com.vipusa.booktown.model.enums.STATUS;
+import com.vipusa.booktown.model.enums.DISCOUNT_STATUS;
+import com.vipusa.booktown.response.ApiResponse;
 import com.vipusa.booktown.service.DiscountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,108 +23,113 @@ public class DiscountController {
 
     private final DiscountService discountService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
-    public ResponseEntity<Discount> createDiscount(@RequestBody Discount discount) {
-        log.info("Creating new discount: {}", discount);
-        try {
-            Discount createdDiscount = discountService.createDiscount(discount);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
-        } catch (Exception e) {
-            log.error("Error creating discount: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<ApiResponse<Discount>> createDiscount(@RequestBody CreateDiscountRequest request) {
+        log.info("Creating new discount: {}", request);
+
+        Discount createdDiscount = discountService.createDiscount(request);
+
+        ApiResponse<Discount> response = ApiResponse.<Discount>builder()
+                .message("Discount Created Successfully")
+                .isSuccess(true)
+                .response(createdDiscount)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{discountId}")
-    public ResponseEntity<Discount> editDiscount(
+    public ResponseEntity<ApiResponse<Discount>> editDiscount(
             @PathVariable Integer discountId,
-            @RequestBody Discount discount) {
+            @RequestBody UpdateDiscountRequest request) {
         log.info("Updating discount with ID: {}", discountId);
-        try {
-            Discount updatedDiscount = discountService.updateDiscount(discountId, discount);
-            if (updatedDiscount != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(updatedDiscount);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (Exception e) {
-            log.error("Error updating discount with ID {}: {}", discountId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+            Discount updatedDiscount = discountService.updateDiscount(discountId, request);
+
+            ApiResponse<Discount> response = ApiResponse.<Discount>builder()
+                    .response(updatedDiscount)
+                    .message("Updated Successfully")
+                    .isSuccess(true)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Discount>> getAllDiscounts() {
+    public ResponseEntity<ApiResponse<List<Discount>>> getAllDiscounts() {
         log.info("Fetching all discounts");
-        try {
-            List<Discount> discounts = discountService.getAllDiscounts();
-            return ResponseEntity.status(HttpStatus.OK).body(discounts);
-        } catch (Exception e) {
-            log.error("Error fetching discounts: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+            List<Discount> discounts = discountService.findAllDiscounts();
+
+            ApiResponse<List<Discount>> response = ApiResponse.<List<Discount>>builder()
+                    .isSuccess(true)
+                    .response(discounts)
+                    .message("All Discounts Fetched")
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     @GetMapping("/{discountId}")
-    public ResponseEntity<Discount> getDiscountById(@PathVariable Integer discountId) {
+    public ResponseEntity<ApiResponse<Discount>> getDiscountById(@PathVariable Integer discountId) {
         log.info("Fetching discount with ID: {}", discountId);
-        try {
-            Discount discount = discountService.getDiscountById(discountId);
-            if (discount != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(discount);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (Exception e) {
-            log.error("Error fetching discount with ID {}: {}", discountId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+        Discount discount = discountService.findDiscountById(discountId);
+        ApiResponse<Discount> response = ApiResponse.<Discount>builder()
+                .response(discount)
+                .message("Discount Fetched Successfully")
+                .isSuccess(true)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{discountId}/status")
-    public ResponseEntity<Discount> editDiscountStatus(
+    public ResponseEntity<ApiResponse<Discount>> editDiscountStatus(
             @PathVariable Integer discountId,
-            @RequestParam STATUS status) {
+            @RequestParam DISCOUNT_STATUS status) {
         log.info("Updating status for discount ID: {} to {}", discountId, status);
-        try {
+
             Discount updatedDiscount = discountService.updateDiscountStatus(discountId, status);
-            if (updatedDiscount != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(updatedDiscount);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (Exception e) {
-            log.error("Error updating status for discount ID {}: {}", discountId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        ApiResponse<Discount> response = ApiResponse.<Discount>builder()
+                .response(updatedDiscount)
+                .message("Updated Successfully")
+                .isSuccess(true)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{discountId}")
-    public ResponseEntity<Boolean> deleteDiscount(@PathVariable Integer discountId) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteDiscount(@PathVariable Integer discountId) {
         log.info("Deleting discount with ID: {}", discountId);
-        try {
-            boolean isDeleted = discountService.deleteDiscount(discountId);
-            if (isDeleted) {
-                return ResponseEntity.status(HttpStatus.OK).body(true);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
-            }
-        } catch (Exception e) {
-            log.error("Error deleting discount with ID {}: {}", discountId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
-        }
+
+            Boolean isDeleted = discountService.deleteDiscount(discountId);
+        ApiResponse<Boolean> response = ApiResponse.<Boolean>builder()
+                .response(isDeleted)
+                .message("Updated Successfully")
+                .isSuccess(true)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<Discount>> getActiveDiscounts() {
+    public ResponseEntity<ApiResponse<List<Discount>>> getActiveDiscounts() {
         log.info("Fetching active discounts");
-        try {
+
             List<Discount> activeDiscounts = discountService.getActiveDiscounts();
-            return ResponseEntity.status(HttpStatus.OK).body(activeDiscounts);
-        } catch (Exception e) {
-            log.error("Error fetching active discounts: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        ApiResponse<List<Discount>> response = ApiResponse.<List<Discount>>builder()
+                .response(activeDiscounts)
+                .message("Updated Successfully")
+                .isSuccess(true)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
 }

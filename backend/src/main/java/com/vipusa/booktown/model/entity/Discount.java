@@ -1,6 +1,7 @@
 package com.vipusa.booktown.model.entity;
 
 import com.vipusa.booktown.model.entity.Book;
+import com.vipusa.booktown.model.enums.DISCOUNT_STATUS;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +25,18 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull(message = "Discount percentage is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Percentage must be greater than 0")
-    @DecimalMax(value = "100.0", message = "Percentage cannot exceed 100")
+    @Column(nullable = false)
     private Float percentage;
 
-    @NotNull(message = "Valid from date is required")
-    private LocalDateTime validFrom;
+    @Column(nullable = false)
+    private LocalDate validFrom;
 
-    @NotNull(message = "Valid to date is required")
-    private LocalDateTime validTo;
+    @Column(nullable = false)
+    private LocalDate validTo;
 
-    @NotBlank(message = "Discount code is required")
     @Column(unique = true, length = 50)
     private String code;
 
-    @NotNull(message = "appliedToAll flag is required")
-    private Boolean appliedToAll;
 
     @ManyToMany
     @JoinTable(name = "discount_book",
@@ -50,11 +47,6 @@ public class Discount {
     @NotNull
     private Boolean isActive;
 
-    public boolean isValid(LocalDateTime dateTime) {
-        return Boolean.TRUE.equals(isActive) &&
-                dateTime != null &&
-                (dateTime.isEqual(validFrom) || dateTime.isAfter(validFrom)) &&
-                (dateTime.isEqual(validTo) || dateTime.isBefore(validTo));
-    }
+    private DISCOUNT_STATUS status = DISCOUNT_STATUS.DISCOUNT_DEACTIVATE;
 
 }
