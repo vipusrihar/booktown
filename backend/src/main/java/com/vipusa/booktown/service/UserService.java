@@ -1,5 +1,6 @@
 package com.vipusa.booktown.service;
 
+import com.vipusa.booktown.model.DTO.UpdateUserRequest;
 import com.vipusa.booktown.model.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,13 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
-    void save(User user);
+    void saveUser(User user);
 
     long countUsers();
 
     boolean deleteUser(Integer id);
 
-    User updateUser(Integer id, User userDetails);
-
+    User updateUser(Integer id, UpdateUserRequest request);
 
     User findUserById(Integer id);
 
@@ -29,4 +29,6 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByUserName(String userName);
+
+    User changeEnableStatus(Integer userId);
 }

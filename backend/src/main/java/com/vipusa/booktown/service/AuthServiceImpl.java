@@ -3,8 +3,8 @@ package com.vipusa.booktown.service;
 import com.vipusa.booktown.config.jwt.JwtUtils;
 import com.vipusa.booktown.exception.RoleNotFoundException;
 import com.vipusa.booktown.exception.UserAlreadyExistsException;
-import com.vipusa.booktown.model.DTO.LoginRequestDTO;
-import com.vipusa.booktown.model.DTO.SignUpRequestDTO;
+import com.vipusa.booktown.model.DTO.LoginRequest;
+import com.vipusa.booktown.model.DTO.SignUpRequest;
 import com.vipusa.booktown.model.DTO.UserDTO;
 import com.vipusa.booktown.model.entity.User;
 import com.vipusa.booktown.model.enums.ERole;
@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtils jwtUtils;
 
     @Override
-    public ResponseEntity<ApiResponse<?>> signUpUser(SignUpRequestDTO signUpRequestDto)
+    public ResponseEntity<ApiResponse<?>> signUpUser(SignUpRequest signUpRequestDto)
             throws UserAlreadyExistsException, RoleNotFoundException {
         if (userService.existsByEmail(signUpRequestDto.getEmail())) {
             throw new UserAlreadyExistsException("Registration Failed: Provided email already exists. Try sign in or provide another email.");
@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = createUser(signUpRequestDto);
-        userService.save(user);
+        userService.saveUser(user);
 
 
         String token = jwtUtils.generateTokenFromEmail(user.getEmail());
@@ -57,13 +57,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<?>> loginUser(LoginRequestDTO loginRequestDto) {
+    public ResponseEntity<ApiResponse<?>> loginUser(LoginRequest loginRequest) {
 
-        User user = userService.findByEmail(loginRequestDto.getEmail())
+        User user = userService.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email Not Registered"));
 
-        if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            String token = jwtUtils.generateTokenFromEmail(loginRequestDto.getEmail());
+        if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            String token = jwtUtils.generateTokenFromEmail(loginRequest.getEmail());
             return ResponseEntity.ok(
                     ApiResponse.builder()
                             .isSuccess(true)
@@ -92,7 +92,6 @@ public class AuthServiceImpl implements AuthService {
                             .response(null)
                             .build());
         }
-        System.out.println("USer " +userDetails.toString());
         System.out.println("USER +"+ userDetails.getUsername());
 
 
@@ -111,13 +110,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    private User createUser(SignUpRequestDTO signUpRequestDto) throws RoleNotFoundException {
+    private User createUser(SignUpRequest signUpRequest) throws RoleNotFoundException {
         return User.builder()
-                .email(signUpRequestDto.getEmail())
-                .userName(signUpRequestDto.getUserName())
-                .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
+                .email(signUpRequest.getEmail())
+                .userName(signUpRequest.getUserName())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .isEnable(true)
-                .role(determineRole(signUpRequestDto.getRole()))
+                .role(determineRole(signUpRequest.getRole()))
                 .createdAt(LocalDateTime.now())
                 .build();
     }

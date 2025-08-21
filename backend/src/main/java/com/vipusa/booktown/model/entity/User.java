@@ -1,5 +1,6 @@
 package com.vipusa.booktown.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vipusa.booktown.model.entity.Address;
 import com.vipusa.booktown.model.enums.ERole;
 import jakarta.persistence.*;
@@ -33,6 +34,7 @@ public class User {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must have at least 8 characters")
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

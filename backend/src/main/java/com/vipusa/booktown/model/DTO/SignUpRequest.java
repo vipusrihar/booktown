@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SignUpRequestDTO {
+public class SignUpRequest {
 
     @NotBlank(message = "UserName is required")
     @Size(min = 3, message = "UserName should have at least 3 character")
@@ -28,7 +28,7 @@ public class SignUpRequestDTO {
 
     private String role;
 
-    public SignUpRequestDTO(String userName, String email, String password) {
+    public SignUpRequest(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
         this.password = password;

@@ -2,8 +2,8 @@ package com.vipusa.booktown.controller;
 
 import com.vipusa.booktown.exception.RoleNotFoundException;
 import com.vipusa.booktown.exception.UserAlreadyExistsException;
-import com.vipusa.booktown.model.DTO.LoginRequestDTO;
-import com.vipusa.booktown.model.DTO.SignUpRequestDTO;
+import com.vipusa.booktown.model.DTO.LoginRequest;
+import com.vipusa.booktown.model.DTO.SignUpRequest;
 import com.vipusa.booktown.response.ApiResponse;
 import com.vipusa.booktown.service.AuthService;
 import jakarta.validation.Valid;
@@ -21,15 +21,16 @@ public class AuthController {
 
     private final AuthService authService;
 
+
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<?>> registerUser(@RequestBody @Valid SignUpRequestDTO signUpRequestDto)
+    public ResponseEntity<ApiResponse<?>> registerUser(@RequestBody @Valid SignUpRequest signUpRequest)
             throws UserAlreadyExistsException, RoleNotFoundException {
-        return authService.signUpUser(signUpRequestDto);
+        return authService.signUpUser(signUpRequest);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequestDTO loginRequestDto){
-        return authService.loginUser(loginRequestDto);
+    public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequest loginRequest){
+        return authService.loginUser(loginRequest);
     }
 
     @GetMapping("/me")
