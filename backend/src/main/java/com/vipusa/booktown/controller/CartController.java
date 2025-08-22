@@ -1,12 +1,15 @@
 package com.vipusa.booktown.controller;
 
+import com.vipusa.booktown.model.DTO.OrderItemDTO;
 import com.vipusa.booktown.model.entity.Cart;
 import com.vipusa.booktown.model.entity.OrderItem;
+import com.vipusa.booktown.response.ApiResponse;
 import com.vipusa.booktown.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -17,40 +20,37 @@ public class CartController {
 
     private final CartService cartService;
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{userId}")
     public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer userId) {
-        log.info("Fetching cart for user ID: {}", userId);
-        Cart cart = cartService.getCartByUserId(userId);
-        if (cart != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(cart);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+
+        Cart cart = cartService.findCartByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(cart);
+
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{userId}")
     public ResponseEntity<Cart> addOrRemoveItemByUserId(
             @PathVariable Integer userId,
-            @RequestBody OrderItem orderItem) {
-        log.info("Updating cart for user ID: {} with item: {}", userId, orderItem);
-        try {
-            Cart updatedCart = cartService.updateCartItem(userId, orderItem);
+            @RequestBody OrderItemDTO itemDTO) {
+
+            Cart updatedCart = cartService.updateCartItem(userId, itemDTO);
             return ResponseEntity.status(HttpStatus.OK).body(updatedCart);
-        } catch (RuntimeException e) {
-            log.error("Error updating cart for user {}: {}", userId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{userId}/clear")
-    public ResponseEntity<Cart> clearAllProducts(@PathVariable Integer userId) {
-        log.info("Clearing cart for user ID: {}", userId);
-        try {
+    public ResponseEntity<ApiResponse<Cart>> clearAllProducts(@PathVariable Integer userId) {
             Cart clearedCart = cartService.clearCart(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(clearedCart);
-        } catch (RuntimeException e) {
-            log.error("Error clearing cart for user {}: {}", userId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+
+            ApiResponse<Cart> response = ApiResponse.<Cart>builder()
+                    .isSuccess(true)
+                    .message("Cart Cleared Successfully")
+                    .response(clearedCart).build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 }

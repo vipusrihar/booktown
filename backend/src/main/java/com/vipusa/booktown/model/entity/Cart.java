@@ -26,7 +26,6 @@ public class Cart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @NotNull(message = "Cart must belong to a user")
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,
@@ -37,23 +36,4 @@ public class Cart {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-     //Adds an item to the cart and updates total price
-    public void addItem(CartItem item) {
-        item.setCart(this);
-        this.items.add(item);
-        recalculateTotal();
-    }
-
-    //Removes an item from the cart and updates total price
-    public void removeItem(CartItem item) {
-        this.items.remove(item);
-        recalculateTotal();
-    }
-
-     //Recalculates the total price based on all cart item
-    public void recalculateTotal() {
-        this.totalPrice = this.items.stream()
-                .mapToDouble(i -> i.getQuantity() * i.getPrice())
-                .sum();
-    }
 }

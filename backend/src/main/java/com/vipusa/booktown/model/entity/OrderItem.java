@@ -22,12 +22,11 @@ public class OrderItem {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
-    private Double amount;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id")
     private BookOrder order;
+
+    private Double amount;
 
 
 }
