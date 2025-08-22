@@ -1,22 +1,22 @@
 package com.vipusa.booktown.service;
 
+import com.vipusa.booktown.model.DTO.CreateReviewRequest;
 import com.vipusa.booktown.model.entity.Review;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface ReviewService {
-    Review createReview(Review review);
+    Review createReview(CreateReviewRequest request);
 
-    List<Review> getAllReviews();
+    List<Review> findAllReviews();
 
-    Optional<Object> getReviewById(Integer reviewId);
+    Review findReviewById(Integer reviewId);
 
-    List<Review> getReviewsByUserId(Integer userId);
+    List<Review> findReviewsByUserId(Integer userId);
 
     Boolean deleteReview(Integer reviewId);
 
-    List<Review> getReviewsByBookId(Integer bookId);
+    List<Review> findReviewsByBookId(Integer bookId);
 }

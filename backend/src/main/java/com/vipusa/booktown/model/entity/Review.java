@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"book_id", "user_id"}))
 public class Review {
 
     @Id
@@ -26,15 +28,9 @@ public class Review {
     @ManyToOne(optional = false)
     private User user;
 
-    @NotNull(message = "Stars rating is required")
-    @Min(value = 1, message = "Minimum stars is 1")
-    @Max(value = 5, message = "Maximum stars is 5")
     private Integer stars;
 
-    @PastOrPresent(message = "Review date cannot be in the future")
     private LocalDateTime reviewedAt;
 
-    @NotBlank(message = "Review text cannot be empty")
-    @Size(max = 1000, message = "Review text cannot exceed 1000 characters")
     private String review;
 }
