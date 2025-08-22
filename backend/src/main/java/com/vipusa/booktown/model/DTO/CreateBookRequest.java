@@ -36,4 +36,9 @@ public class CreateBookRequest {
     @NotNull(message = "Stock count is required")
     @Min(value = 0, message = "Stock cannot be negative")
     private Integer stock;
+
+    @NotNull(message = "Price is required")
+    @Min(value = 0, message = "Price Cannot Be Negative")
+    private Double price;
+
 }

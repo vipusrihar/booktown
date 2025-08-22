@@ -2,7 +2,6 @@ package com.vipusa.booktown.model.entity;
 
 import com.vipusa.booktown.model.enums.BookCategory;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +32,8 @@ public class Book {
     private BookCategory category;
 
     private String imageLink;
+
+    private Double price;
 
     private Integer stock;
 }

@@ -59,6 +59,8 @@ public class BookServiceImpl implements BookService {
             book.setStock(request.getStock());
         if(request.getCategory() != null)
             book.setCategory(convertToBookCategory(request.getCategory()));
+        if(request.getPrice() != null)
+            book.setPrice(request.getPrice());
 
         try {
             return bookRepository.save(book);
@@ -94,6 +96,7 @@ public class BookServiceImpl implements BookService {
         book.setDescription(request.getDescription());
         book.setImageLink(request.getImageLink());
         book.setStock(request.getStock());
+        book.setPrice(request.getPrice());
 
         //Change The To BookCategory Type
         book.setCategory(convertToBookCategory(request.getCategory()));

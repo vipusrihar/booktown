@@ -26,5 +26,7 @@ public class UpdateBookRequest {
 
     private Integer stock;
 
+    private Double price;
+
 }
 

@@ -1,7 +1,5 @@
 package com.vipusa.booktown.model.entity;
 
-import com.vipusa.booktown.model.entity.Book;
-import com.vipusa.booktown.model.entity.BookOrder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,15 +17,17 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @ManyToOne(optional = false)
-    private Book book;
-
-    @ManyToOne(optional = false)
-    private BookOrder order;
+    private String bookName;
 
     @Column(nullable = false)
     private Integer quantity;
 
     @Column(nullable = false)
-    private Float amount;
+    private Double amount;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "order_id")
+    private BookOrder order;
+
+
 }
