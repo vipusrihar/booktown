@@ -55,16 +55,14 @@ export const secureImageUpload = async (file) => {
         const result = await response.json();
 
         // Output Validation
-        if (!result?.secure_url || !result?.public_id) {
+        if (!result?.secure_url || !result?.publicid) {
             throw new Error('Invalid response structure from Cloudinary');
         }
 
         console.log(result.secure_url);
 
-        return {
-            url: result.secure_url, // Always use HTTPS
-            publicId: result.public_id
-        };
+        return  result.secure_url;
+
     } catch (error) {
         // Secure Error Handling
         console.error('Secure upload failed:', error.name, error.message);

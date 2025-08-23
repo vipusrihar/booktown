@@ -6,9 +6,9 @@ import {
 
 // Centralized error handler for reviews
 const handleReviewError = (error, dispatch, failureAction) => {
-  const message = error.response?.data?.message || 
-                 error.message || 
-                 'Failed to fetch reviews. Please try again.';
+  const message = error.response?.data?.message ||
+    error.message ||
+    'Failed to fetch reviews. Please try again.';
   dispatch(failureAction(message));
   console.error(`${failureAction.type}:`, message, error);
   return message;
@@ -16,10 +16,10 @@ const handleReviewError = (error, dispatch, failureAction) => {
 
 export const getAllReviews = () => async (dispatch) => {
   dispatch(getAllReviewsStart());
-  
+
   try {
     const response = await securedApi.get("/reviews");
-    dispatch(getAllReviewsSuccess(response.data));
+    dispatch(getAllReviewsSuccess(response.data.response));
     return response.data; // Return data for potential chaining
   } catch (error) {
     const message = handleReviewError(error, dispatch, getAllReviewsFailure);
@@ -29,12 +29,12 @@ export const getAllReviews = () => async (dispatch) => {
 
 export const getReviewsByUserID = (userId) => async (dispatch) => {
   dispatch(getReviewsByUserIDStart());
-  
+
   try {
     if (!userId) throw new Error('User ID is required');
-    
+
     const response = await securedApi.get(`/reviews/user/${userId}`);
-    dispatch(getReviewsByUserIDSuccess(response.data));
+    dispatch(getReviewsByUserIDSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleReviewError(error, dispatch, getReviewsByUserIDFailure);

@@ -31,7 +31,7 @@ const OrderForm = ({ user, cartItems, setOpen }) => {
     }, [dispatch, user?.id]);
 
     const subtotal = cartItems.reduce((total, item) => {
-        const discountObj = discounts[item.book._id];
+        const discountObj = discounts[item.book.id];
         const discount = discountObj ? discountObj.amount : 0;
         const discountedPrice = item.book.price * (1 - discount / 100);
         return total + discountedPrice * item.quantity;
@@ -109,7 +109,7 @@ const OrderForm = ({ user, cartItems, setOpen }) => {
 
             <Box sx={{ borderWidth: 1, padding: 2 }}>
                 {cartItems.map((item, index) => {
-                    const discountObj = discounts[item.book._id];
+                    const discountObj = discounts[item.book.id];
                     const discount = discountObj ? discountObj.amount : 0;
                     const discountedPrice = item.book.price * (1 - discount / 100);
                     return (

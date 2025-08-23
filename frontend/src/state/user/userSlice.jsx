@@ -18,7 +18,7 @@ const userSlice = createSlice({
         },
         getAllUsersSuccess: (state, action) => {
             state.isLoading = false;
-            state.users = action.payload.users;
+            state.users = action.payload;
             state.success = true;
         },
         getAllUsersFailure: (state, action) => {
@@ -50,7 +50,7 @@ const userSlice = createSlice({
             state.isLoading = false,
             state.selectedUser = action.payload
             state.users = state.users.map(user => 
-                user._id === action.payload.user._id ? action.payload.user : user
+                user.id === action.payload.user.id ? action.payload.user : user
             );
             state.success = true;
         },
@@ -65,7 +65,7 @@ const userSlice = createSlice({
         },
         deleteUserSuccess: (state, action) => {
             state.isLoading = false;
-            state.users = state.users.filter(user => user._id !== action.payload.userId);
+            state.users = state.users.filter(user => user.id !== action.payload.userId);
             state.success = true;
         },
         deleteUserFailure: (state, action) => {

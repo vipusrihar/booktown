@@ -38,7 +38,7 @@ const discountSlice = createSlice({
       state.isLoading = false;
       const updated = action.payload;
       state.discounts = state.discounts.map((d) =>
-        d._id === updated._id ? updated : d
+        d.id === updated.id ? updated : d
       );
       state.success = "Discount updated successfully.";
     },
@@ -70,7 +70,7 @@ const discountSlice = createSlice({
       state.isLoading = false;
       const updated = action.payload;
       state.discounts = state.discounts.map((d) =>
-        d._id === updated._id ? updated : d
+        d.id === updated.id ? updated : d
       );
       state.success = "Discount status updated.";
     },

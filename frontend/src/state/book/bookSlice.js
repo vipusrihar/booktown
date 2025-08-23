@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getBookById } from './Action';
 
 const initialValues = {
     books: [],
@@ -19,7 +18,7 @@ const bookSlice = createSlice({
         },
         getAllBooksSuccess: (state, action) => {
             state.isLoading = false;
-            state.books = action.payload.books;
+            state.books = action.payload;
             state.success = true;
         },
         getAllBooksFailure: (state, action) => {
@@ -62,7 +61,7 @@ const bookSlice = createSlice({
         updateBookSuccess: (state, action) => {
             state.isLoading = false;
             state.books = state.books.map(book =>
-                book._id === action.payload._id ? action.payload : book);
+                book.id === action.payload.id ? action.payload : book);
             state.success = true;
         },
         updateBookFailure: (state, action) => {

@@ -20,6 +20,7 @@ securedApi.interceptors.request.use(
   (config) => {
     // Add authorization token if available
     const token = localStorage.getItem("token");
+    console.log("token :",token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -49,5 +50,5 @@ const addSecurityHeaders = (config) => {
 };
 
 // Apply security headers to both instances
-securedApi.interceptors.request.use(addSecurityHeaders);
-publicApi.interceptors.request.use(addSecurityHeaders);
+// securedApi.interceptors.request.use(addSecurityHeaders);
+// publicApi.interceptors.request.use(addSecurityHeaders);

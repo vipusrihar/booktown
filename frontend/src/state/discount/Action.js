@@ -10,7 +10,7 @@ import {
 
 // Centralized error handler
 const handleDiscountError = (error, dispatch, failureAction) => {
-  const message = error.response?.data?.message ||  error.message || 'Discount operation failed. Please try again.';
+  const message = error.response?.data?.message || error.message || 'Discount operation failed. Please try again.';
   dispatch(failureAction(message));
   console.error(`${failureAction.type}:`, message);
   return message;
@@ -18,14 +18,14 @@ const handleDiscountError = (error, dispatch, failureAction) => {
 
 export const createDiscount = (discountData) => async (dispatch) => {
   dispatch(createDiscountStart());
-  
+
   try {
     if (!discountData || typeof discountData !== 'object') {
       throw new Error('Invalid discount data');
     }
 
-    const response = await securedApi.post('/discounts/createDiscount', { discount: discountData });
-    dispatch(createDiscountSuccess(response.data));
+    const response = await securedApi.post('/discount/createDiscount', { discount: discountData });
+    dispatch(createDiscountSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleDiscountError(error, dispatch, createDiscountFailure);
@@ -35,10 +35,10 @@ export const createDiscount = (discountData) => async (dispatch) => {
 
 export const getAllDiscounts = () => async (dispatch) => {
   dispatch(getAllDiscountsStart());
-  
+
   try {
-    const response = await securedApi.get('/discounts/getAllDiscounts');
-    dispatch(getAllDiscountsSuccess(response.data));
+    const response = await securedApi.get('/discount/active');
+    dispatch(getAllDiscountsSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleDiscountError(error, dispatch, getAllDiscountsFailure);
@@ -48,15 +48,15 @@ export const getAllDiscounts = () => async (dispatch) => {
 
 export const editDiscount = (discountId, updatedData) => async (dispatch) => {
   dispatch(editDiscountStart());
-  
+
   try {
     if (!discountId) throw new Error('Discount ID is required');
     if (!updatedData || typeof updatedData !== 'object') {
       throw new Error('Invalid update data');
     }
 
-    const response = await securedApi.put(`/discounts/editDiscount/${discountId}`, updatedData);
-    dispatch(editDiscountSuccess(response.data));
+    const response = await securedApi.put(`/discount/editDiscount/${discountId}`, updatedData);
+    dispatch(editDiscountSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleDiscountError(error, dispatch, editDiscountFailure);
@@ -66,10 +66,10 @@ export const editDiscount = (discountId, updatedData) => async (dispatch) => {
 
 export const updateDiscountStatusById = (id, active) => async (dispatch) => {
   dispatch(updateDiscountStatusStart());
-  
+
   try {
     if (!id) throw new Error('Discount ID is required');
-    
+
     const response = await securedApi.put(`/discounts/updateStatus/${id}`, { active });
     dispatch(updateDiscountStatusSuccess(response.data.discount));
     return response.data;
@@ -81,12 +81,12 @@ export const updateDiscountStatusById = (id, active) => async (dispatch) => {
 
 export const findDiscountByBookId = (bookId) => async (dispatch) => {
   dispatch(getDiscountByBookIdStart());
-  
+
   try {
     if (!bookId) throw new Error('Book ID is required');
-    
-    const response = await securedApi.get(`/discounts/byBook/${bookId}`);
-    dispatch(getDiscountByBookIdSuccess(response.data));
+
+    const response = await securedApi.get(`/discount/byBook/${bookId}`);
+    dispatch(getDiscountByBookIdSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleDiscountError(error, dispatch, getDiscountByBookIdFailure);
@@ -96,12 +96,12 @@ export const findDiscountByBookId = (bookId) => async (dispatch) => {
 
 export const deleteDiscountById = (id) => async (dispatch) => {
   dispatch(deleteDiscountStart());
-  
+
   try {
     if (!id) throw new Error('Discount ID is required');
-    
-    const response = await securedApi.delete(`/discounts/${id}`);
-    dispatch(deleteDiscountSuccess(response.data));
+
+    const response = await securedApi.delete(`/discount/${id}`);
+    dispatch(deleteDiscountSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleDiscountError(error, dispatch, deleteDiscountFailure);

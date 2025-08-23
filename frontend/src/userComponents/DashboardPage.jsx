@@ -130,7 +130,7 @@ const DashboardPage = () => {
             <List dense>
               {cartItems?.length > 0 ? (
                 cartItems.map((item, index) => (
-                  <ListItem key={item._id || index} sx={{ borderWidth: 1, display: 'flex', alignItems: 'center', marginBottom: 0.5 }}>
+                  <ListItem key={item.id || index} sx={{ borderWidth: 1, display: 'flex', alignItems: 'center', marginBottom: 0.5 }}>
                     <ListItemText
                       primary={item.book?.title || 'Unknown Book'}
                       secondary={`Quantity: ${item.quantity}`}

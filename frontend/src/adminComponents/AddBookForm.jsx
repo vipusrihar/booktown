@@ -28,15 +28,17 @@ const AddBookForm = ({ onClose, onSubmit, initialData = null }) => {
     category: '',
     imageLink: '',
     description: '',
-    stock: '',
-    price: '',
+    stock: 0,
+    price: 0,
     ...initialData,
   });
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+  
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [name]: name === "price" || name === "stock" ? Number(value) : value,
     });
   };
 
@@ -44,8 +46,8 @@ const AddBookForm = ({ onClose, onSubmit, initialData = null }) => {
     const file = event.target.files[0];
     if (!file) return;
     setUploadImage(true);
-    const imageUrl = await secureImageUpload(file);
-    setForm(prev => ({ ...prev, image: imageUrl }));
+    const image = await secureImageUpload(file);
+    setForm(prev => ({ ...prev, imageLink: image }));
     setUploadImage(false);
   };
 

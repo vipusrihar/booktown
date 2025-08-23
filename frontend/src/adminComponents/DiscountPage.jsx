@@ -49,7 +49,7 @@ const DiscountsPage = () => {
     if (discount) {
       const normalized = {
         ...discount,
-        books: discount.books.map((b) => (typeof b === 'object' ? b._id : b)),
+        books: discount.books.map((b) => (typeof b === 'object' ? b.id : b)),
       };
       setSelectedDiscount(normalized);
     } else {
@@ -64,29 +64,6 @@ const DiscountsPage = () => {
     setSelectedDiscount(defaultDiscount);
   };
 
-  const handleChange = (field, value) => {
-    setSelectedDiscount((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = () => {
-    const { code, amount, validFrom, validTo, appliesToAll, books } = selectedDiscount;
-
-    if (!code || !amount || !validFrom || !validTo) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-    if (!appliesToAll && (!books || books.length === 0)) {
-      alert('Please select at least one book or enable "Applies to all".');
-      return;
-    }
-
-    dialogType === 'add'
-      ? dispatch(createDiscount(selectedDiscount))
-      : dispatch(editDiscount(selectedDiscount._id, selectedDiscount));
-
-    handleClose();
-  };
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this discount?')) {
@@ -95,7 +72,7 @@ const DiscountsPage = () => {
   };
 
   const handleToggleActive = (discount) => {
-    dispatch(updateDiscountStatusById(discount._id, !discount.active));
+    dispatch(updateDiscountStatusById(discount.id, !discount.active));
   };
 
   useEffect(() => {
@@ -148,8 +125,6 @@ const DiscountsPage = () => {
           <AddDiscountForm
             dialogType={dialogType}
             selectedDiscount={selectedDiscount}
-            handleChange={handleChange}
-            handleSave={handleSave}
             handleCloseDialog={handleClose}
           />
         </Box>
@@ -184,7 +159,7 @@ const DiscountsPage = () => {
                 </TableRow>
               ) : (
                 filteredDiscounts.map((row) => (
-                  <TableRow hover key={row._id}>
+                  <TableRow hover key={row.id}>
                     {columns.map((column) =>
                       column.id === 'actions' ? (
                         <TableCell key="actions">
@@ -198,7 +173,7 @@ const DiscountsPage = () => {
                             </IconButton>
                             <IconButton
                               color="error"
-                              onClick={() => handleDelete(row._id)}
+                              onClick={() => handleDelete(row.id)}
 
                             >
                               <DeleteIcon />

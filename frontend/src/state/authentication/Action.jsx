@@ -38,26 +38,33 @@ export const loginUser = (email, password, navigate) => async (dispatch) => {
 
     console.log("Attempting login with:", { email, password });
 
-    const response = await publicApi.post("/auth/login", { email, password });
+    const loginData = { "email": email, "password": password }
+    
+    console.log(loginData)
+
+    const response = await publicApi.post("/auth/login", loginData);
 
     //Backend returns { success, message, response }
     if (!response.data?.response) {
       throw new Error("Invalid server response");
     }
 
-    console.log("Login response:", response.data);
+    console.log("Login response:", response.data.response);
+
+    console.log(response.data.response)
 
     // Store auth data
-    localStorage.setItem(TOKEN_KEY, response.data.response); // <-- JWT token
+    localStorage.setItem(TOKEN_KEY, response.data.response);
 
     // startSessionMonitoring(dispatch);
 
-    dispatch(loginSuccess(response.data));
-
     const res = await securedApi.get("/auth/me");
     console.log("User data:", res.data.response);
-    const user = res.data;
+    dispatch(loginSuccess(res.data.response));
+    const user = res.data.response;
 
+    localStorage.setItem(AUTH_DATA_KEY, JSON.stringify(user));
+    console.log("Role is", user.role)
     if (user.role === "ROLE_ADMIN") {
       navigate("/adminDashboard", { replace: true });
     } else {
@@ -96,15 +103,17 @@ export const registerUser = (userData, navigate) => async (dispatch) => {
       role: userData.role || "ROLE_USER",
     };
 
+    console.log(userData)
+
     const response = await publicApi.post("/auth/signup", userData);
 
-    console.log("Registration response:", response.data);
+    console.log("Registration response:", response.data.response);
 
     if (!response.data?.success) {
       throw new Error("Registration incomplete");
     }
 
-    dispatch(registerSuccess(response.data));
+    dispatch(registerSuccess(response.data.response));
     alert("Registration successful! Please login.");
     navigate("/login", { replace: true });
 
@@ -123,27 +132,29 @@ export const registerUser = (userData, navigate) => async (dispatch) => {
   }
 };
 
-export const logoutUser = (navigate) => async (dispatch) => {
+export const logoutUser = (navigate, signOut) => async (dispatch) => {
   try {
-    // Attempt server logout if token exists
     if (localStorage.getItem(TOKEN_KEY)) {
       await securedApi.post("/auth/logout");
     }
+
+    // If hybrid login (Asgardeo), sign out from SSO
+    if (signOut) {
+      signOut();
+    }
+
   } catch (error) {
     console.error("Logout error:", error);
   } finally {
-    // Clear client-side data
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(AUTH_DATA_KEY);
 
-    // Reset application state
     dispatch(logout());
     dispatch(clearBookState());
     dispatch(clearCartState());
     dispatch(clearOrderState());
     dispatch(clearUserState());
-
-    // Redirect to home
+    console.log("logged out")
     navigate("/", { replace: true });
   }
 };

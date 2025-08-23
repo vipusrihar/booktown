@@ -10,7 +10,7 @@
 // import { getAllReviews } from '../state/review/Action';
 
 // const columns = [
-//   { id: '_id', label: 'Review ID', minWidth: 80 },
+//   { id: 'id', label: 'Review ID', minWidth: 80 },
 //   { id: `book.title`, label: 'Book Title', minWidth: 150 },
 //   { id: `user.name`, label: 'User', minWidth: 120 },
 //   { id: 'rating', label: 'Rating', minWidth: 100 },
@@ -109,7 +109,7 @@
 //             <TableBody>
 //               {filteredReviews.map((row, index) => (
 //                 <TableRow
-//                   key={row._id}
+//                   key={row.id}
 //                   hover
 //                   sx={{
 //                     backgroundColor: index % 2 === 0 ? '#FAFAFA' : 'white',

@@ -6,17 +6,17 @@ export const fetchAllCounts = () => async (dispatch) => {
 
     try {
         const [users, orders, books, discounts] = await Promise.all([
-            securedApi.get('/users/count'),
-            securedApi.get('/orders/count'),
-            securedApi.get('/books/count'),
-            securedApi.get('/discounts/count')
+            securedApi.get('/user/count'),
+            securedApi.get('/order/count'),
+            securedApi.get('/book/count'),
+            securedApi.get('/discount/count')
         ]);
 
         dispatch(getCountsSuccess({
-            users: users.data.count,
-            orders: orders.data.count,
-            books: books.data.count,
-            discounts: discounts.data.count,
+            users: users.data.response,
+            orders: orders.data.response,
+            books: books.data.response,
+            discounts: discounts.data.response,
         }));
 
         return {

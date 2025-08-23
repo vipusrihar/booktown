@@ -34,7 +34,7 @@ export const createOrder = (orderDetails) => async (dispatch) => {
         const response = await securedApi.post('/orders', orderDetails);
 
         if (response.status === 201) {
-            dispatch(createOrderSuccess(response.data));
+            dispatch(createOrderSuccess(response.data.response));
             dispatch(clearCartState());
             return response.data;
         }
@@ -52,8 +52,8 @@ export const getAllOrders = () => async (dispatch) => {
     dispatch(getAllOrdersStart());
 
     try {
-        const response = await securedApi.get('/orders');
-        dispatch(getAllOrdersSuccess({ orders: response.data }));
+        const response = await securedApi.get('/order/all');
+        dispatch(getAllOrdersSuccess(response.data.response ));
         return response.data;
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch orders';
@@ -105,7 +105,7 @@ export const changeOrderStatus = (orderId, orderStatus) => async (dispatch) => {
         if (!orderStatus) throw new Error('Order status is required');
 
         const response = await securedApi.put(`/orders/${orderId}`, { orderStatus });
-        dispatch(changeOrderStatusSuccess(response.data));
+        dispatch(changeOrderStatusSuccess(response.data.response));
         return response.data;
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message || 'Failed to update order status';

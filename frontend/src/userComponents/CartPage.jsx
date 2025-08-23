@@ -28,27 +28,27 @@ const CartPage = () => {
     }
   }, [dispatch, user]);
 
-  useEffect(() => {
-    cartItems?.forEach(item => {
-      dispatch(findDiscountByBookId(item.book.id));
-    });
-  }, [cartItems, dispatch]);
+  // useEffect(() => {
+  //   cartItems?.forEach(item => {
+  //     dispatch(findDiscountByBookId(item.book.id));
+  //   });
+  // }, [cartItems, dispatch]);
 
   // Helper to calculate discounted price
-  const getDiscountedPrice = (bookId, price) => {
-    const discount = discounts[bookId];
-    if (discount?.active && discount.amount > 0) {
-      return price - (price * discount.amount) / 100;
-    }
-    return price;
-  };
+  // const getDiscountedPrice = (bookId, price) => {
+  //   const discount = discounts[bookId];
+  //   if (discount?.active && discount.amount > 0) {
+  //     return price - (price * discount.amount) / 100;
+  //   }
+  //   return price;
+  // };
 
-  const cartTotal = cartItems?.reduce((total, item) => {
-    const price = getDiscountedPrice(item.book.id, item.book.price);
-    return total + price * item.quantity;
-  }, 0) || 0;
+  // const cartTotal = cartItems?.reduce((total, item) => {
+  //   const price = getDiscountedPrice(item.id, item.price);
+  //   return total + price * item.quantity;
+  // }, 0) || 0;
 
-  const finalTotal = cartTotal + DELIVERY_CHARGE;
+  // const finalTotal = cartTotal + DELIVERY_CHARGE;
 
   return (
     <Box sx={{ p: 3 }}>
@@ -74,21 +74,21 @@ const CartPage = () => {
             </TableHead>
             <TableBody>
               {cartItems.map((item, index) => {
-                const originalPrice = item.book.price;
-                const discount = discounts[item.book.id];
-                const discountAmount = discount?.active ? discount.amount : 0;
-                const discountedPrice = getDiscountedPrice(item.book.id, originalPrice);
-                const totalForItem = discountedPrice * item.quantity;
+                const originalPrice = item.price;
+                const discount = discounts[item.id];
+                {/* const discountAmount = discount?.active ? discount.amount : 0; */}
+                {/* const discountedPrice = getDiscountedPrice(item.book.id, originalPrice); */}
+                {/* const totalForItem = discountedPrice * item.quantity; */}
 
                 return (
                   <TableRow key={index}>
                     <TableCell>{item.book.title}</TableCell>
                     <TableCell>
-                      <Button onClick={() => dispatch(addCartItem(item.book.id, -1, user.id))}>
+                      <Button onClick={() => dispatch(addCartItem(item.id, -1, user.id))}>
                         <RemoveTwoToneIcon sx={{ width: 15, height: 15 }} />
                       </Button>
                       {item.quantity}
-                      <Button onClick={() => dispatch(addCartItem(item.book.id, 1, user.id))}>
+                      <Button onClick={() => dispatch(addCartItem(item.id, 1, user.id))}>
                         <AddTwoToneIcon sx={{ width: 15, height: 15 }} />
                       </Button>
                     </TableCell>

@@ -22,7 +22,7 @@ const AddDiscountForm = ({ dialogType, selectedDiscount, handleCloseDialog }) =>
 
         dialogType === 'add'
             ? dispatch(createDiscount(selectedDiscount))
-            : dispatch(editDiscount(selectedDiscount._id, selectedDiscount));
+            : dispatch(editDiscount(selectedDiscount.id, selectedDiscount));
 
         handleClose();
     };
@@ -96,13 +96,13 @@ const AddDiscountForm = ({ dialogType, selectedDiscount, handleCloseDialog }) =>
                         onChange={(e) => handleChange('books', e.target.value)}
                         renderValue={(selected) =>
                             selected
-                                .map((id) => availableBooks.find((book) => book._id === id)?.title)
+                                .map((id) => availableBooks.find((book) => book.id === id)?.title)
                                 .join(', ')
                         }
                     >
                         {availableBooks.map((book) => (
-                            <MenuItem key={book._id} value={book._id}>
-                                <Checkbox checked={selectedDiscount?.books?.includes(book._id)} />
+                            <MenuItem key={book.id} value={book.id}>
+                                <Checkbox checked={selectedDiscount?.books?.includes(book.id)} />
                                 <ListItemText primary={book.title} />
                             </MenuItem>
                         ))}

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeOrderStatus, getAllOrders } from '../state/order/Action';
 
 const columns = [
-  { id: '_id', label: 'Order ID', minWidth: 100 },
+  { id: 'id', label: 'Order ID', minWidth: 100 },
   { id: 'user', label: 'User', minWidth: 150 },
   { id: 'date', label: 'Date', minWidth: 120 },
   { id: 'totalPrice', label: 'Total ($)', minWidth: 100 },
@@ -56,7 +56,7 @@ const OrdersPage = () => {
     if (selectedOrderId) {
       dispatch(changeOrderStatus(selectedOrderId, newStatus));
       const updatedOrders = orders.map(order =>
-        order._id === selectedOrderId ? { ...order, orderStatus: newStatus } : order
+        order.id === selectedOrderId ? { ...order, orderStatus: newStatus } : order
       );
       setOrders(updatedOrders);
     }
@@ -96,10 +96,10 @@ const OrdersPage = () => {
               {orders.map((row, index) => (
                 <TableRow
                   hover
-                  key={row._id}
+                  key={row.id}
                   sx={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F9FAFB' }}
                 >
-                  <TableCell>{row._id}</TableCell>
+                  <TableCell>{row.id}</TableCell>
                   <TableCell>{row.user}</TableCell>
 
                   <TableCell>
@@ -116,7 +116,7 @@ const OrdersPage = () => {
                       <Button
                         variant="outlined"
                         size="small"
-                        onClick={(e) => handleOpenMenu(e, row._id)}
+                        onClick={(e) => handleOpenMenu(e, row.id)}
                       >
                         Change
                       </Button>

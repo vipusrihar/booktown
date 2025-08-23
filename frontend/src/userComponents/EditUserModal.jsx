@@ -12,7 +12,7 @@ import { updateUser } from '../state/user/Action';
 
 const EditUser = ({ handleClose }) => {
   const dispatch = useDispatch();
-  const selectedUser = useSelector((state) => state.users.selectedUser);
+  const selectedUser = useSelector((state) => state.auth.selectedUser);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -62,7 +62,8 @@ const EditUser = ({ handleClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateUser(selectedUser._id, formData));
+    console.log(selectedUser.id,"   ",formData)
+    dispatch(updateUser(selectedUser.id, formData));
     handleClose();
   };
 

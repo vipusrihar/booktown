@@ -63,6 +63,15 @@ const BooksPage = () => {
     setEditBook(null);
   };
 
+  const handleAddBook = (newBook) => {
+    dispatch(createBook(newBook));
+    handleClose();
+  };
+
+  const handleUpdateBook = (updatedBook) => {
+    dispatch(updateBook(updatedBook.id, updatedBook));
+    handleClose();
+  }
 
   const handleDelete = async (bookId) => {
     if (window.confirm(`Are you sure you want to delete this book?`)) {
@@ -155,10 +164,10 @@ const BooksPage = () => {
             borderRadius: 2,
           }}
         >
-          <AddBookForm
+           <AddBookForm
             onClose={handleClose}
+            onSubmit={editBook ? handleUpdateBook : handleAddBook}
             initialData={editBook}
-            mode={editBook ? 'edit' : 'add'} // pass mode to form
           />
         </Box>
       </Modal>

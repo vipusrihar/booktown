@@ -17,8 +17,8 @@ export const getAllUsers = () => async (dispatch) => {
   dispatch(getAllUsersStart());
   
   try {
-    const response = await securedApi.get("/users");
-    dispatch(getAllUsersSuccess(response.data));
+    const response = await securedApi.get("/user/all");
+    dispatch(getAllUsersSuccess(response.data.response));
     return response.data; // Return data for potential chaining
   } catch (error) {
     const message = handleUserError(error, dispatch, getAllUsersFailure);
@@ -32,8 +32,8 @@ export const getUserById = (id) => async (dispatch) => {
   try {
     if (!id) throw new Error('User ID is required');
     
-    const response = await securedApi.get(`/users/${id}`);
-    dispatch(getUserByIdSuccess(response.data));
+    const response = await securedApi.get(`/user/${id}`);
+    dispatch(getUserByIdSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleUserError(error, dispatch, getUserByIdFailure);
@@ -51,7 +51,7 @@ export const updateUser = (id, updatedData) => async (dispatch) => {
     }
 
     const response = await securedApi.put(`/users/${id}`, updatedData);
-    dispatch(updateUserSuccess(response.data));
+    dispatch(updateUserSuccess(response.data.response));
     return response.data;
   } catch (error) {
     const message = handleUserError(error, dispatch, updateUserFailure);

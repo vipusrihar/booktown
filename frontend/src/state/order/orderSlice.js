@@ -18,7 +18,7 @@ const orderSlice = createSlice({
         },
         getAllOrdersSuccess: (state, action) => {
             state.isLoading = false;
-            state.orders = action.payload.orders;
+            state.orders = action.payload;
             state.success = true;
         },
         getAllOrdersFailure: (state, action) => {
@@ -78,7 +78,7 @@ const orderSlice = createSlice({
         changeOrderStatusSuccess: (state, action) => {
             state.isLoading = false;
             state.orders = state.orders.map(order =>
-                order._id === action.payload._id ? action.payload : order)
+                order.id === action.payload.id ? action.payload : order)
             state.success = true;
         },
         changeOrderStatusFailure: (state, action) => {

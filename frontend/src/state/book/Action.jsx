@@ -16,25 +16,26 @@ const handleBookError = (error, dispatch, failureAction) => {
 
 export const createBook = (bookData) => async (dispatch) => {
   dispatch(addBookStart());
+  console.log(bookData)
   try {
-    const response = await securedApi.post('/books', bookData);
-    dispatch(addBookSuccess(response.data));
-    return response.data; // Return data for component handling
+    const response = await securedApi.post('/book/create', bookData);
+    dispatch(addBookSuccess(response.data.response));
+    window.alert("Book Created Successfully");
+    console.log(response.data)
   } catch (error) {
     const message = handleBookError(error, dispatch, addBookFailure);
     throw new Error(message); // Re-throw for component handling
   }
 };
 
-export const updateBook = (hashid, bookData) => async (dispatch) => {
+export const updateBook = (bookId, bookData) => async (dispatch) => {
   dispatch(updateBookStart());
-  
+
   try {
-    if (!hashid) throw new Error('Book ID is required');
-    
-    const response = await securedApi.put(`/books/${hashid}`, bookData);
-    dispatch(updateBookSuccess(response.data));
-    return response.data;
+    if (!bookId) throw new Error('Book ID is required');
+
+    const response = await securedApi.put(`/book/${bookId}`, bookData);
+    dispatch(updateBookSuccess(response.data.response));
   } catch (error) {
     const message = handleBookError(error, dispatch, updateBookFailure);
     throw new Error(message);
@@ -43,41 +44,45 @@ export const updateBook = (hashid, bookData) => async (dispatch) => {
 
 export const getAllBooks = () => async (dispatch) => {
   dispatch(getAllBooksStart());
-  
+
   try {
-    const response = await publicApi.get('/books');
-    dispatch(getAllBooksSuccess(response.data));
-    return response.data;
+    const response = await publicApi.get('/book/all');
+    dispatch(getAllBooksSuccess(response.data.response));
+    console.log(response.data);
   } catch (error) {
     const message = handleBookError(error, dispatch, getAllBooksFailure);
     throw new Error(message);
   }
 };
 
-export const getBookById = (hashid) => async (dispatch) => {
+export const getBookById = (bookId) => async (dispatch) => {
   dispatch(getBookByIdStart());
-  
+
   try {
-    if (!hashid) throw new Error('Book ID is required');
-    
-    const response = await publicApi.get(`/books/${hashid}`);
-    dispatch(getBookByIdSuccess(response.data));
-    return response.data;
+    if (!bookId) throw new Error('Book ID is required');
+
+    const response = await publicApi.get(`/book/${bookId}`);
+    dispatch(getBookByIdSuccess(response.data.response));
   } catch (error) {
     const message = handleBookError(error, dispatch, getBookByIdFailure);
     throw new Error(message);
   }
 };
 
-export const deleteBookById = (hashid) => async (dispatch) => {
+export const deleteBookById = (bookId) => async (dispatch) => {
   dispatch(deleteBookStart());
-  
   try {
-    if (!hashid) throw new Error('Book ID is required');
+    if (!bookId) throw new Error('Book ID is required');
+
+    const response = await securedApi.delete(`/book/${bookId}`);
+    const { isSuccess, response: isDeleted, message } = response.data;
+
+    if (!isSuccess || !isDeleted) {
+      throw new Error(message || 'Book deletion failed');
+    }
+
+    dispatch(deleteBookSuccess(bookId)); 
     
-    await securedApi.delete(`/books/${hashid}`);
-    dispatch(deleteBookSuccess(hashid)); // Pass the deleted ID
-    return hashid; // Return the ID for reference
   } catch (error) {
     const message = handleBookError(error, dispatch, deleteBookFailure);
     throw new Error(message);

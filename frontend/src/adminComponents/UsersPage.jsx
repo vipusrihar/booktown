@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsers } from '../state/user/Action';
 
 const columns = [
-  { id: '_id', label: 'ID', minWidth: 50 },
+  { id: 'id', label: 'ID', minWidth: 50 },
   { id: 'name', label: 'Name', minWidth: 150 },
   { id: 'email', label: 'Email', minWidth: 200 },
   { id: 'address', label: 'Address', minWidth: 150 },
@@ -76,7 +76,7 @@ const UsersPage = () => {
               {filteredUsers.map((user, index) => (
                 <TableRow
                   hover
-                  key={user._id || user.id}
+                  key={user.id || user.id}
                   sx={{
                     backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F9FAFB',
                   }}
@@ -84,8 +84,8 @@ const UsersPage = () => {
                   {columns.map((column) => {
                     let value = '-';
 
-                    if (column.id === '_id') {
-                      value = user._id;
+                    if (column.id === 'id') {
+                      value = user.id;
                     } else if (column.id === 'name') {
                       value = user.name;
                     } else if (column.id === 'email') {
