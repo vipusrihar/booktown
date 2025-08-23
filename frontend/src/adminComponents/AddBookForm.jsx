@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box, TextField, Button, Typography, InputLabel, Select,
   MenuItem, FormControl, Grid, CircularProgress,
@@ -8,11 +8,13 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { secureImageUpload } from '../utils/uploadImageToCloudinary';
 
 const CATEGORIES = [
-  'fiction', 'non-fiction', 'romance', 'thriller', 'mystery', 'fantasy',
-  'science', 'history', 'biography', 'self-help', 'education', 'children',
-  'young-adult', 'spirituality', 'philosophy', 'memoir', 'classic', 'poetry',
-  'sinhala-literature', 'tamil-literature', 'sri-lankan-history'
-]
+  "CATEGORY_FICTION", "CATEGORY_NON_FICTION", "CATEGORY_SCIENCE",
+  "CATEGORY_HISTORY", "CATEGORY_BIOGRAPHY", "CATEGORY_FANTASY",
+  "CATEGORY_ROMANCE", "CATEGORY_HORROR", "CATEGORY_THRILLER",
+  "CATEGORY_CHILDREN", "CATEGORY_YOUNG_ADULT", "CATEGORY_POETRY",
+  "CATEGORY_SELF_HELP", "CATEGORY_BUSINESS", "CATEGORY_TECHNOLOGY",
+  "CATEGORY_TRAVEL", "CATEGORY_COOKING", "CATEGORY_HEALTH",
+  "CATEGORY_RELIGION", "CATEGORY_EDUCATION"];
 
 const AddBookForm = ({ onClose, onSubmit, initialData = null }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +26,7 @@ const AddBookForm = ({ onClose, onSubmit, initialData = null }) => {
     author: '',
     isbn: '',
     category: '',
-    image: '',
+    imageLink: '',
     description: '',
     stock: '',
     price: '',
@@ -123,12 +125,12 @@ const AddBookForm = ({ onClose, onSubmit, initialData = null }) => {
         </label>
       </Grid>
 
-      {form.image && (
+      {form.imageLink && (
         <Box sx={{ mb: 2 }}>
           <img
-            src={form.image}
+            src={form.imageLink}
             alt="Book Cover"
-            style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }}
+            style={{ width: "100%", maxHeight: "200px", objectFit: "contain" }}
           />
         </Box>
       )}
@@ -179,9 +181,6 @@ const AddBookForm = ({ onClose, onSubmit, initialData = null }) => {
           name="category"
           value={form.category}
           onChange={handleChange}
-          label="Category"
-          error={!!errors.category}
-          helperText={errors.category}
           required
         >
           {CATEGORIES.map((genre) => (

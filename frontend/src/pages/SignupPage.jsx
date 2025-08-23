@@ -13,7 +13,7 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role,setRole] = useState("USER"); 
+  const [role,setRole] = useState("ROLE_USER"); 
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();

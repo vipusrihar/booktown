@@ -108,9 +108,9 @@ const BooksList = () => {
   }, [dispatch, books]);
 
 
-  const handleViewBook = (hashid) => {
-    dispatch(getBookById(hashid));
-    navigation(`/book/${hashid}`);
+  const handleViewBook = (bookId) => {
+    dispatch(getBookById(bookId));
+    navigation(`/book/${bookId}`);
   }
 
   const handleAddToCart = (book) => {
@@ -123,12 +123,19 @@ const BooksList = () => {
     setModalOpen(true);
   };
 
-  const handleConfirmAddToCart = () => {
-    dispatch(addCartItem(selectedBook._id, quantity, userId));
-    alert("Item added to cart successfully!");
-    console.log("Add to Cart:", selectedBook, quantity);
-    setModalOpen(false);
-  };
+ const handleConfirmAddToCart = async () => {
+    if (!selectedBook) return;
+    try {
+      console.log(selectedBook.id," ", userId)
+        await dispatch(addCartItem(selectedBook.id, quantity, userId));
+        window.alert("Item added to cart successfully!");
+        setModalOpen(false);
+    } catch (error) {
+        window.alert("Failed to add item to cart.");
+        console.error(error);
+    }
+};
+
 
   const filteredBooks = books.filter((book) => {
     const matchesSearch =
@@ -169,7 +176,7 @@ const BooksList = () => {
       <Box sx={{ flexGrow: 1, padding: 4, }}>
         <Grid container spacing={4}>
           {filteredBooks.map((book) => (
-            <Grid size={3} key={book._id}>
+            <Grid size={3} key={book.id}>
               <Item>
                 <ImageContainer>
                   <Chip
@@ -188,7 +195,7 @@ const BooksList = () => {
 
                   <Box
                     component="img"
-                    src={book.image}
+                    src={book.imageLink}
                     alt={book.title}
                     sx={{
                       width: '100%',
@@ -202,7 +209,7 @@ const BooksList = () => {
                       <IconButton
                         sx={{ color: '#fff', backgroundColor: '#00000088' }}
                         aria-label="View Book"
-                        onClick={() => handleViewBook(book.hashid)}>
+                        onClick={() => handleViewBook(book.id)}>
                         <VisibilityIcon />
                       </IconButton>
                     </Tooltip>

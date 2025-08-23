@@ -6,13 +6,13 @@ import AddToCartModal from './AddToCartModal';
 import { addCartItem } from '../state/cart/Action';
 
 const BookDetails = () => {
-  const hashid = window.location.pathname.split('/').pop();
+  const bookId = window.location.pathname.split('/').pop();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getBookById(hashid));
-  }, [dispatch, hashid]);
+    dispatch(getBookById(bookId));
+  }, [dispatch, bookId]);
 
   const book = useSelector((state) => state.books.selectedBook);
   const userId = useSelector((state) => state.auth.selectedUser?.id) || null;
@@ -43,8 +43,7 @@ const BookDetails = () => {
 
 
   const handleConfirmAddToCart = () => {
-    dispatch(addCartItem(selectedBook._id, quantity, userId));
-    alert("Item added to cart successfully!")
+    dispatch(addCartItem(selectedBook.id, quantity, userId));
     console.log("Add to Cart:", selectedBook, quantity);
     setModalOpen(false);
   };
@@ -56,7 +55,7 @@ const BookDetails = () => {
         <Grid size={2}>
           <Box
             component="img"
-            src={book.image}
+            src={book.imageLink}
             alt={book.title}
             sx={{
               width: '100%',

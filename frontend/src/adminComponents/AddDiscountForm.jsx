@@ -5,18 +5,55 @@ import {
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-const AddDiscountForm = ({ dialogType, selectedDiscount, handleChange,
-    handleSave, handleCloseDialog }) => {
+const AddDiscountForm = ({ dialogType, selectedDiscount, handleCloseDialog }) => {
+
+    const handleSave = () => {
+        const { code, amount, validFrom, validTo, appliesToAll, books } = selectedDiscount;
+
+        if (!code || !amount || !validFrom || !validTo) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        if (!appliesToAll && (!books || books.length === 0)) {
+            alert('Please select at least one book or enable "Applies to all".');
+            return;
+        }
+
+        dialogType === 'add'
+            ? dispatch(createDiscount(selectedDiscount))
+            : dispatch(editDiscount(selectedDiscount._id, selectedDiscount));
+
+        handleClose();
+    };
+
+    const handleChange = (field, value) => {
+        setSelectedDiscount((prev) => ({ ...prev, [field]: value }));
+    };
 
 
-
-    console.log(selectedDiscount);
 
     const availableBooks = useSelector((store) => store.books.books);
     return (
-        <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2, mb: 3, backgroundColor: 'white' }}>
-            <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold', mb: 2 }}>
-                {dialogType === 'edit' ? 'Edit Discount' : 'Add Discount'}
+        <Box
+            sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: 2,
+                mb: 3,
+                backgroundColor: 'white'
+            }}>
+
+            <Typography
+                variant="h6"
+                sx={{
+                    color: '#1976d2',
+                    fontWeight: 'bold',
+                    mb: 2
+                }}>
+                {
+                    dialogType === 'edit' ? 'Edit Discount' : 'Add Discount'
+                }
             </Typography>
 
             <Stack spacing={2}>
@@ -47,8 +84,12 @@ const AddDiscountForm = ({ dialogType, selectedDiscount, handleChange,
                     onChange={(e) => handleChange('validTo', e.target.value)}
                     fullWidth
                 />
-                <FormControl fullWidth disabled={selectedDiscount?.appliesToAll}>
+                <FormControl
+                    fullWidth
+                    disabled={selectedDiscount?.appliesToAll}>
+
                     <InputLabel>Select Books</InputLabel>
+
                     <Select
                         multiple
                         value={selectedDiscount?.books || []}

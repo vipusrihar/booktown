@@ -16,33 +16,33 @@ const columns = [
   { id: 'category', label: 'Category', minWidth: 80 },
   { id: 'stock', label: 'Stock', minWidth: 40 },
   { id: 'price', label: 'Price', minWidth: 40 },
-
 ];
+
 
 const categories = [
-  { value: '', label: '' },
-  { value: 'fiction', label: 'Fiction' },
-  { value: 'non-fiction', label: 'Non-Fiction' },
-  { value: 'romance', label: 'Romance' },
-  { value: 'thriller', label: 'Thriller' },
-  { value: 'mystery', label: 'Mystery' },
-  { value: 'fantasy', label: 'Fantasy' },
-  { value: 'science', label: 'Science' },
-  { value: 'history', label: 'History' },
-  { value: 'biography', label: 'Biography' },
-  { value: 'self-help', label: 'Self-Help' },
-  { value: 'education', label: 'Education' },
-  { value: 'children', label: 'Children' },
-  { value: 'young-adult', label: 'Young Adult' },
-  { value: 'spirituality', label: 'Spirituality' },
-  { value: 'philosophy', label: 'Philosophy' },
-  { value: 'memoir', label: 'Memoir' },
-  { value: 'classic', label: 'Classic' },
-  { value: 'poetry', label: 'Poetry' },
-  { value: 'sinhala-literature', label: 'Sinhala Literature' },
-  { value: 'tamil-literature', label: 'Tamil Literature' },
-  { value: 'sri-lankan-history', label: 'Sri Lankan History' },
+  { value: "", label: "" },
+  { value: "CATEGORY_FICTION", label: "Fiction" },
+  { value: "CATEGORY_NON_FICTION", label: "Non-Fiction" },
+  { value: "CATEGORY_SCIENCE", label: "Science" },
+  { value: "CATEGORY_HISTORY", label: "History" },
+  { value: "CATEGORY_BIOGRAPHY", label: "Biography" },
+  { value: "CATEGORY_FANTASY", label: "Fantasy" },
+  { value: "CATEGORY_ROMANCE", label: "Romance" },
+  { value: "CATEGORY_HORROR", label: "Horror" },
+  { value: "CATEGORY_THRILLER", label: "Thriller" },
+  { value: "CATEGORY_CHILDREN", label: "Children" },
+  { value: "CATEGORY_YOUNG_ADULT", label: "Young Adult" },
+  { value: "CATEGORY_POETRY", label: "Poetry" },
+  { value: "CATEGORY_SELF_HELP", label: "Self-Help" },
+  { value: "CATEGORY_BUSINESS", label: "Business" },
+  { value: "CATEGORY_TECHNOLOGY", label: "Technology" },
+  { value: "CATEGORY_TRAVEL", label: "Travel" },
+  { value: "CATEGORY_COOKING", label: "Cooking" },
+  { value: "CATEGORY_HEALTH", label: "Health" },
+  { value: "CATEGORY_RELIGION", label: "Religion" },
+  { value: "CATEGORY_EDUCATION", label: "Education" }
 ];
+
 
 const BooksPage = () => {
   const [open, setOpen] = useState(false);
@@ -50,8 +50,6 @@ const BooksPage = () => {
   const dispatch = useDispatch();
   const [editBook, setEditBook] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState('');
-
-
 
   const books = useSelector((state) => state.books.books || []);
 
@@ -66,41 +64,37 @@ const BooksPage = () => {
   };
 
 
-  const handleAddBook = (newBook) => {
-    dispatch(createBook(newBook));
-    alert('Book added successfully!');
-    handleClose();
-  };
-
-  const handleUpdateBook = (updatedBook) => {
-    dispatch(updateBook(updatedBook.hashid, updatedBook));
-    handleClose();
-  }
-
-  const handleDelete = (hashid) => {
-    console.log("Deleting book with ID:", hashid);
+  const handleDelete = async (bookId) => {
     if (window.confirm(`Are you sure you want to delete this book?`)) {
-      dispatch(deleteBookById(hashid));
+      try {
+        const result = await dispatch(deleteBookById(bookId));
+        if (result) {
+          alert('Book deleted successfully!');
+        }
+      } catch (error) {
+        alert(error.message || 'Failed to delete book');
+      }
     }
   };
-
 
   const handleEdit = (book) => {
     setEditBook(book);
     setOpen(true);
   };
 
-
   const filteredBooks = books.filter((book) => {
     const matchesSearch =
-      book.title.toLowerCase().includes(searchText.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchText.toLowerCase()) ||
-      book.isbn.includes(searchText);
+      (book.title?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
+      (book.author?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
+      (book.isbn || '').includes(searchText);
 
-    const matchesCategory = categoryFilter === '' || book.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === '' ||
+      (book.category?.toLowerCase() || '') === categoryFilter.toLowerCase();
 
     return matchesSearch && matchesCategory;
   });
+
   return (
     <Box sx={{ padding: 2 }}>
       <Box
@@ -130,7 +124,6 @@ const BooksPage = () => {
           onChange={(e) => setSearchText(e.target.value)}
         />
 
-
         <TextField
           select
           label="Filter by Category"
@@ -148,11 +141,9 @@ const BooksPage = () => {
             </option>
           ))}
         </TextField>
-
-        
       </Box>
 
-      <Modal open={open} onClose={handleClose} sx={{ overflow: "scroll" }}>
+      <Modal open={open} onClose={handleClose} sx={{ overflow: 'scroll' }}>
         <Box
           sx={{
             position: 'absolute',
@@ -166,12 +157,11 @@ const BooksPage = () => {
         >
           <AddBookForm
             onClose={handleClose}
-            onSubmit={editBook ? handleUpdateBook : handleAddBook}
             initialData={editBook}
+            mode={editBook ? 'edit' : 'add'} // pass mode to form
           />
         </Box>
       </Modal>
-
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 550 }}>
@@ -191,11 +181,15 @@ const BooksPage = () => {
                     {column.label}
                   </TableCell>
                 ))}
-                <TableCell sx={{
-                  fontWeight: 'bold',
-                  color: '#78350F',
-                  backgroundColor: '#FCD34D',
-                }}>Edit/Delete</TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    color: '#78350F',
+                    backgroundColor: '#FCD34D',
+                  }}
+                >
+                  Edit/Delete
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -213,8 +207,7 @@ const BooksPage = () => {
                   ))}
                   <TableCell>
                     <Button onClick={() => handleEdit(row)}>Edit</Button>
-                    <Button onClick={() => handleDelete(row.hashid)}>Delete</Button>
-
+                    <Button onClick={() => handleDelete(row.id)}>Delete</Button>
                   </TableCell>
                 </TableRow>
               ))}

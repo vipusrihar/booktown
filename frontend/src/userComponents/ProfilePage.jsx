@@ -23,7 +23,9 @@ const ProfilePage = () => {
   const auth = JSON.parse(localStorage.getItem("auth"));
   const userId = auth?.user?.id;
 
-  const user = useSelector((store) => store.users.selectedUser);
+  const user = useSelector(store => store.auth.selectedUser);
+
+  console.log(user)
 
   useEffect(() => {
     if (userId) {
