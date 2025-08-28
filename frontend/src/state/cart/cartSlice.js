@@ -40,7 +40,7 @@ const cartSlice = createSlice({
     getCartItemsSuccess: (state, action) => {
       state.isLoading = false;
       state.success = true;
-      state.cartItems = action.payload.items;
+      state.cartItems = action.payload.cartItemResponses;
     },
     getCartItemsFailure: (state, action) => {
       state.isLoading = false;

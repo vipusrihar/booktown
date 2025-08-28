@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Modal, Typography, Button, Box, Table, TableHead,
   TableRow, TableCell, TableBody, Paper
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { findDiscountByBookId } from '../state/discount/Action';
 import { addCartItem, getCartByUserId } from '../state/cart/Action';
 import CloseIcon from '@mui/icons-material/Close';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
@@ -17,38 +16,29 @@ const CartPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.selectedUser);
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const discounts = useSelector((state) => state.discounts.discountsByBookId || {});
-
   const [open, setOpen] = useState(false);
+
   const DELIVERY_CHARGE = 250;
+
+  // Calculate totals using useMemo to avoid recalculating on every render unnecessarily
+  const { cartTotal, finalTotal } = useMemo(() => {
+    let subtotal = 0;
+    cartItems.forEach(item => {
+      const discountedAmount = item.discount * item.quantity;
+      const totalForItem = (item.bookPrice * item.quantity) - discountedAmount;
+      subtotal += totalForItem;
+    });
+    return {
+      cartTotal: subtotal,
+      finalTotal: subtotal + DELIVERY_CHARGE
+    };
+  }, [cartItems]);
 
   useEffect(() => {
     if (user?.id) {
       dispatch(getCartByUserId(user.id));
     }
   }, [dispatch, user]);
-
-  // useEffect(() => {
-  //   cartItems?.forEach(item => {
-  //     dispatch(findDiscountByBookId(item.book.id));
-  //   });
-  // }, [cartItems, dispatch]);
-
-  // Helper to calculate discounted price
-  // const getDiscountedPrice = (bookId, price) => {
-  //   const discount = discounts[bookId];
-  //   if (discount?.active && discount.amount > 0) {
-  //     return price - (price * discount.amount) / 100;
-  //   }
-  //   return price;
-  // };
-
-  // const cartTotal = cartItems?.reduce((total, item) => {
-  //   const price = getDiscountedPrice(item.id, item.price);
-  //   return total + price * item.quantity;
-  // }, 0) || 0;
-
-  // const finalTotal = cartTotal + DELIVERY_CHARGE;
 
   return (
     <Box sx={{ p: 3 }}>
@@ -74,30 +64,27 @@ const CartPage = () => {
             </TableHead>
             <TableBody>
               {cartItems.map((item, index) => {
-                const originalPrice = item.price;
-                const discount = discounts[item.id];
-                {/* const discountAmount = discount?.active ? discount.amount : 0; */}
-                {/* const discountedPrice = getDiscountedPrice(item.book.id, originalPrice); */}
-                {/* const totalForItem = discountedPrice * item.quantity; */}
+                const discountedAmount = item.discount * item.quantity;
+                const totalForItem = (item.bookPrice * item.quantity) - discountedAmount;
 
                 return (
                   <TableRow key={index}>
-                    <TableCell>{item.book.title}</TableCell>
+                    <TableCell>{item.title}</TableCell>
                     <TableCell>
-                      <Button onClick={() => dispatch(addCartItem(item.id, -1, user.id))}>
+                      <Button onClick={() => dispatch(addCartItem(item.bookId, -1, user.id))}>
                         <RemoveTwoToneIcon sx={{ width: 15, height: 15 }} />
                       </Button>
                       {item.quantity}
-                      <Button onClick={() => dispatch(addCartItem(item.id, 1, user.id))}>
+                      <Button onClick={() => dispatch(addCartItem(item.bookId, 1, user.id))}>
                         <AddTwoToneIcon sx={{ width: 15, height: 15 }} />
                       </Button>
                     </TableCell>
-                    <TableCell>{originalPrice.toFixed(2)}</TableCell>
-                    <TableCell>{discountAmount > 0 ? `${discountAmount}%` : '-'}</TableCell>
-                    <TableCell>{discountedPrice.toFixed(2)}</TableCell>
+                    <TableCell>{item.bookPrice.toFixed(2)}</TableCell>
+                    <TableCell>{item.discount}</TableCell>
+                    <TableCell>{discountedAmount.toFixed(2)}</TableCell>
                     <TableCell>{totalForItem.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Button onClick={() => dispatch(addCartItem(item.book.id, -item.quantity, user.id))}>
+                      <Button onClick={() => dispatch(addCartItem(item.bookId, -item.quantity, user.id))}>
                         <CloseIcon sx={{ color: 'red' }} />
                       </Button>
                     </TableCell>

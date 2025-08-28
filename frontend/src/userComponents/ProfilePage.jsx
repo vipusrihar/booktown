@@ -47,7 +47,7 @@ const ProfilePage = () => {
           textAlign: 'center'
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' , background :'yellow'}}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', background: 'yellow' }}>
           <Typography variant="h6" gutterBottom >
             Profile
           </Typography>
@@ -62,7 +62,7 @@ const ProfilePage = () => {
 
         <ProfileField label="Name" value={user?.name} />
         <ProfileField label="Email" value={user?.email} />
-        <ProfileField label="Phone" value={user?.phoneNo} />
+        <ProfileField label="Phone" value={user?.phoneNumber} />
 
 
         <Box sx={{ textAlign: 'left', mb: 2, display: 'flex', justifyContent: 'space-between' }}>

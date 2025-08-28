@@ -49,8 +49,9 @@ export const updateUser = (id, updatedData) => async (dispatch) => {
     if (!updatedData || typeof updatedData !== 'object') {
       throw new Error('Invalid update data');
     }
-
-    const response = await securedApi.put(`/users/${id}`, updatedData);
+    console.log(updatedData);
+    const response = await securedApi.put(`/user/edit/${id}`, updatedData);
+    console.log(response.data)
     dispatch(updateUserSuccess(response.data.response));
     return response.data;
   } catch (error) {

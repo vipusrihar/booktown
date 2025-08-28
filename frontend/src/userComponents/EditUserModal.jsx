@@ -8,41 +8,43 @@ import {
   Grid
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUser } from '../state/user/Action';
+import { getUserById, updateUser } from '../state/user/Action';
 
 const EditUser = ({ handleClose }) => {
   const dispatch = useDispatch();
-  const selectedUser = useSelector((state) => state.auth.selectedUser);
+  const currentUser = useSelector((state) => state.users.selectedUser);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    name: '',
+    userName: '',
     email: '',
-    phoneNo: '',
+    phoneNumber: '',
     address: {
       street: '',
+      district: '',
       city: '',
-      state: '',
       country: '',
       zipCode: ''
     }
   });
 
   useEffect(() => {
-    if (selectedUser) {
+    if (currentUser) {
       setFormData({
-        name: selectedUser.name || '',
-        email: selectedUser.email || '',
-        phoneNo: selectedUser.phoneNo || '',
+        userName: currentUser.userName || '',
+        email: currentUser.email || '',
+        phoneNumber: currentUser.phoneNumber || '',
         address: {
-          street: selectedUser.address?.street || '',
-          city: selectedUser.address?.city || '',
-          state: selectedUser.address?.state || '',
-          country: selectedUser.address?.country || '',
-          zipCode: selectedUser.address?.zipCode || ''
+          street: currentUser.address?.street || '',
+          district: currentUser.address?.district || '',
+          city: currentUser.address?.city || '',
+          country: currentUser.address?.country || '',
+          zipCode: currentUser.address?.zipCode || ''
         }
       });
     }
-  }, [selectedUser]);
+  }, [currentUser]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,10 +62,19 @@ const EditUser = ({ handleClose }) => {
     }
   };
 
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.userName) newErrors.userName = "Name is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(selectedUser.id,"   ",formData)
-    dispatch(updateUser(selectedUser.id, formData));
+    if (!validate()) return;
+    dispatch(updateUser(currentUser.id, formData));
     handleClose();
   };
 
@@ -82,8 +93,8 @@ const EditUser = ({ handleClose }) => {
           fullWidth
           margin="normal"
           label="Name"
-          name="name"
-          value={formData.name}
+          name="userName"
+          value={formData.userName}
           onChange={handleChange}
         />
 
@@ -100,8 +111,8 @@ const EditUser = ({ handleClose }) => {
           fullWidth
           margin="normal"
           label="Phone Number"
-          name="phoneNo"
-          value={formData.phoneNo}
+          name="phoneNumber"
+          value={formData.phoneNumber}
           onChange={handleChange}
         />
 
@@ -120,20 +131,20 @@ const EditUser = ({ handleClose }) => {
 
           <Grid size={6}>
             <TextField
-              label="City"
-              name="address.city"
+              label="district"
+              name="address.district"
               fullWidth
-              value={formData.address.city}
+              value={formData.address.district}
               onChange={handleChange}
             />
           </Grid>
 
           <Grid size={6}>
             <TextField
-              label="State"
-              name="address.state"
+              label="city"
+              name="address.city"
               fullWidth
-              value={formData.address.state}
+              value={formData.address.city}
               onChange={handleChange}
             />
           </Grid>
@@ -159,25 +170,25 @@ const EditUser = ({ handleClose }) => {
           </Grid>
         </Grid>
 
-        <Box sx={{display:'flex' , justifyContent:'space-between', mt: 3 }}>
-        <Button
-        type='button'
-        variant='contained'
-        color='error'
-        onClick={handleClose}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+          <Button
+            type='button'
+            variant='contained'
+            color='error'
+            onClick={handleClose}
 
-        >
-        Cancel
+          >
+            Cancel
 
-        </Button>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-         
-        >
-          Save
-        </Button>
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+
+          >
+            Save
+          </Button>
         </Box>
       </Box>
     </Paper>
