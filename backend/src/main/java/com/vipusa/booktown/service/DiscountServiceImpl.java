@@ -38,7 +38,9 @@ public class DiscountServiceImpl implements DiscountService{
         discount.setValidFrom(request.getValidFrom());
         discount.setValidTo(request.getValidTo());
 
-        discount.setAppliedBooks(findAppliedBooks(request.getAppliedToAll(), request.getAppliedBooks()));
+        discount.setAppliedBooks(
+                findAppliedBooks(request.getAppliedToAll(), request.getAppliedBooks()
+                ));
         discount.setIsActive(isValidNow(request.getValidFrom(), request.getValidTo()));
 
         if(discount.getIsActive()){
@@ -158,6 +160,12 @@ public class DiscountServiceImpl implements DiscountService{
 
     @Override
     public List<Discount> getActiveDiscounts() {
-        return discountRepository.findByIsActive(DISCOUNT_STATUS.DISCOUNT_ACTIVE);
+        return discountRepository.findByStatus(DISCOUNT_STATUS.DISCOUNT_ACTIVE);
+    }
+
+    @Override
+    public long countActiveDiscounts() {
+        return discountRepository.countByStatus(DISCOUNT_STATUS.DISCOUNT_ACTIVE);
+
     }
 }

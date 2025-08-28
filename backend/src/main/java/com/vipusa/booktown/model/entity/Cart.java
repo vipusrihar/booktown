@@ -1,8 +1,8 @@
 package com.vipusa.booktown.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,13 +26,12 @@ public class Cart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
-
-    private Double totalPrice = 0.0;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 

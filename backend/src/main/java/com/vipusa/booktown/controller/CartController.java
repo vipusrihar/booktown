@@ -2,8 +2,8 @@ package com.vipusa.booktown.controller;
 
 import com.vipusa.booktown.model.DTO.OrderItemDTO;
 import com.vipusa.booktown.model.entity.Cart;
-import com.vipusa.booktown.model.entity.OrderItem;
 import com.vipusa.booktown.response.ApiResponse;
+import com.vipusa.booktown.response.CartResponse;
 import com.vipusa.booktown.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,21 +22,32 @@ public class CartController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer userId) {
+    public ResponseEntity<ApiResponse<CartResponse>> getCartByUserId(@PathVariable Integer userId) {
 
-        Cart cart = cartService.findCartByUserId(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(cart);
+        CartResponse cartResponse = cartService.findCartByUserId(userId);
+        ApiResponse<CartResponse> response = ApiResponse.<CartResponse>builder()
+                .response(cartResponse)
+                .message("Cart Fetched Successfully")
+                .isSuccess(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{userId}")
-    public ResponseEntity<Cart> addOrRemoveItemByUserId(
+    public ResponseEntity<ApiResponse<Cart>> addOrRemoveItemByUserId(
             @PathVariable Integer userId,
             @RequestBody OrderItemDTO itemDTO) {
 
-            Cart updatedCart = cartService.updateCartItem(userId, itemDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedCart);
+        Cart updatedCart = cartService.updateCartItem(userId, itemDTO);
+        ApiResponse<Cart> response = ApiResponse.<Cart>builder()
+                .response(updatedCart)
+                .message("Cart Updates Successfully")
+                .isSuccess(true)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 

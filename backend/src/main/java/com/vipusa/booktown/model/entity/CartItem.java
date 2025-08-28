@@ -1,5 +1,6 @@
 package com.vipusa.booktown.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -19,10 +20,12 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonIgnore
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
+    @JsonIgnore
     private Book book;
 
     private Integer quantity;

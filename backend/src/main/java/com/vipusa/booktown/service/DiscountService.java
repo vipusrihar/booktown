@@ -24,4 +24,6 @@ public interface DiscountService{
     boolean deleteDiscount(Integer discountId);
 
     List<Discount> getActiveDiscounts();
+
+    long countActiveDiscounts();
 }

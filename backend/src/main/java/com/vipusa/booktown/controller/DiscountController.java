@@ -122,7 +122,7 @@ public class DiscountController {
     public ResponseEntity<ApiResponse<List<Discount>>> getActiveDiscounts() {
         log.info("Fetching active discounts");
 
-            List<Discount> activeDiscounts = discountService.getActiveDiscounts();
+        List<Discount> activeDiscounts = discountService.getActiveDiscounts();
         ApiResponse<List<Discount>> response = ApiResponse.<List<Discount>>builder()
                 .response(activeDiscounts)
                 .message("Updated Successfully")
@@ -131,5 +131,21 @@ public class DiscountController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse<Integer>> countActiveDiscounts() {
+        log.info("Fetching active discounts");
+
+        Integer count = (int)discountService.countActiveDiscounts();
+        ApiResponse<Integer> response = ApiResponse.<Integer>builder()
+                .response(count)
+                .message("Updated Successfully")
+                .isSuccess(true)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
+
 
 }

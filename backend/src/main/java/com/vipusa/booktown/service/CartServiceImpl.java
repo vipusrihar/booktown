@@ -3,23 +3,41 @@ package com.vipusa.booktown.service;
 import com.vipusa.booktown.exception.ResourceNotFoundException;
 import com.vipusa.booktown.model.DTO.OrderItemDTO;
 import com.vipusa.booktown.model.entity.*;
+import com.vipusa.booktown.model.enums.DISCOUNT_STATUS;
 import com.vipusa.booktown.repository.BookRepository;
 import com.vipusa.booktown.repository.CartRepository;
+import com.vipusa.booktown.repository.DiscountRepository;
 import com.vipusa.booktown.repository.UserRepository;
+import com.vipusa.booktown.response.CartItemResponse;
+import com.vipusa.booktown.response.CartResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
+
     private final UserRepository userRepository;
+
     private final BookRepository bookRepository;
+
+    private final DiscountRepository discountRepository;
 
     @Override
     public Cart updateCartItem(Integer userId, OrderItemDTO itemDTO) {
-        Cart cart = findCartByUserId(userId);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User Not Found With This ID"));
+
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(()-> new ResourceNotFoundException("Cart Not Found"));
 
         Book book = bookRepository.findById(itemDTO.getBookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book Not Found"));
@@ -44,35 +62,56 @@ public class CartServiceImpl implements CartService {
             cart.getItems().add(cartItem);
         }
 
-        // update total price
-        double total = cart.getItems().stream()
-                .mapToDouble(i -> i.getQuantity() * i.getPrice())
-                .sum();
-        cart.setTotalPrice(total);
-
         return cartRepository.save(cart);
     }
 
     @Override
     public Cart clearCart(Integer userId) {
-        Cart cart = findCartByUserId(userId);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User Not Found With This ID"));
+
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(()-> new ResourceNotFoundException("Cart Not Found"));
 
         cart.getItems().clear();
-        cart.setTotalPrice(0.0);
 
         return cartRepository.save(cart);
     }
 
-    public Cart findCartByUserId(Integer userId) {
+    public CartResponse findCartByUserId(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User Not Found With This ID"));
 
+
         // If no cart exists for this user, create a new one
-        return cartRepository.findByUser(user)
+        Cart cart =  cartRepository.findByUser(user)
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setUser(user);
                     return cartRepository.save(newCart);
                 });
+
+        List<CartItemResponse> itemResponses = new ArrayList<>();
+        for (CartItem item : cart.getItems()) {
+            Optional<Discount> discounts = discountRepository.findActiveDiscountByBookId(
+                    item.getBook().getId(),
+                    DISCOUNT_STATUS.DISCOUNT_ACTIVE,
+                    LocalDate.now()
+            );
+
+            Discount bestDiscount = discounts.stream()
+                    .max(Comparator.comparing(Discount::getPercentage))
+                    .orElse(null);
+
+            CartItemResponse itemResponse = new CartItemResponse(item, bestDiscount);
+            itemResponses.add(itemResponse);
+        }
+
+
+
+
+        return new  CartResponse(cart.getId(), itemResponses);
     }
+
+
 }
